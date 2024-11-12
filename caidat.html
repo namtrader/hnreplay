@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cài đặt</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f6f8;
+            color: #333;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+        }
+
+        label {
+            color: #34495e;
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input[type="text"], input[type="number"], select {
+            padding: 8px;
+            margin-top: 5px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #fff;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, select:focus {
+            border-color: #3498db;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #3498db;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #resetButton {
+            background-color: #d35400;
+        }
+
+        #resetButton:hover {
+            background-color: #e67e22;
+        }
+        .cloudinary-settings {
+            margin-top: 20px;
+            padding: 8px;
+            background-color: #eaf3f8;
+            border: 1px solid #b3c8d9;
+            border-radius: 5px;
+        }
+
+        .cloudinary-inputs {
+            margin-top: 10px; /* Khoảng cách giữa checkbox và các input */
+            padding: 8px; /* Padding cho các input bên trong */
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>Cài đặt</h1>
+
+<div>
+
+    <label for="perPage">Trade / Trang:</label>
+    <input type="number" id="perPage" placeholder="PerPage" />
+
+    <label for="sortOrder">Sắp xếp trade:</label>
+    <select id="sortOrder">
+        <option value="asc">Cũ nhất</option>
+        <option value="desc">Mới nhất</option>
+    </select>
+
+    <div class="cloudinary-settings">
+        <label>
+            <input type="checkbox" id="cloudinaryToggle"> Kích hoạt CLOUDINARY
+        </label>
+        <div class="cloudinary-inputs">
+            <label for="cloudinaryName">CLOUD_NAME:</label>
+            <input type="text" id="cloudinaryName" placeholder="CLOUD_NAME">
+
+            <label for="uploadPreset">CLOUDINARY_UPLOAD_PRESET:</label>
+            <input type="text" id="uploadPreset" placeholder="CLOUDINARY_UPLOAD_PRESET">
+        </div>
+    </div>
+    <div class="button-container">
+        <button id="saveButton">Lưu cài đặt</button>
+        <button id="resetButton">Đặt lại về mặc định</button>
+    </div>
+</div>
+<script src="js/caidat.js"></script>
+</body>
+</html>

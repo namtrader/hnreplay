@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Popup</title>
+    <style type="text/css">
+        h1 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Style cho popup */
+        #Popup {
+            width: 300px;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        
+        /* Style cho các nút */
+        #Popup button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            background-color: #3498db;
+            color: white;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        /* Hiệu ứng khi di chuột qua nút */
+        #Popup button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div id="Popup">
+        <h1>HN Replay App</h1>
+        <button id="openThongkeTab">Mở Thống Kê</button>
+        <button id="openCategoryTab">Dự án mới</button>
+        <button id="openCaidatTab">Cài đặt</button>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>

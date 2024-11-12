@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống Kê Giao Dịch</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f7fc;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+        font-size: 2em;
+        margin-bottom: 20px;
+    }
+
+    #statsContainer {
+        margin-top: 20px;
+    }
+
+    #displayStats {
+        display: flex;
+        gap: 20px;
+    }
+
+    .total-item, .stat-item {
+        flex: 1;
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        border: 1px solid #ddd;
+        margin-bottom: 20px;
+    }
+
+    .total-item h3, .stat-item h3 {
+        font-size: 1.2em;
+        color: #444;
+        margin-bottom: 15px;
+    }
+
+    .total-item p, .stat-item p {
+        margin: 8px 0;
+        color: #555;
+    }
+
+    .rate {
+        background-color: #4caf50;
+        color: white;
+        padding: 0 6px;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+
+    .stat-item {
+        background-color: #f9f9f9;
+        border-left: 5px solid #ff9800;
+    }
+
+    .stat-item h3 {
+        color: #ff9800;
+    }
+
+    .stat-item p {
+        font-size: 0.9em;
+    }
+
+    .stat-item hr {
+        border: 0;
+        border-top: 1px solid #ddd;
+        margin-top: 15px;
+    }
+
+    /* Sửa lại bảng giao dịch */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 30px;
+        margin-bottom: 10px;
+        background-color: #fafafa;
+    }
+
+    th, td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        color: #333;
+        cursor: pointer;
+    }
+
+    th:hover {
+        background-color: #e0e0e0;
+    }
+
+    #pagination button:not(:first-child) {
+        margin-left: 10px; /* Thêm khoảng cách margin-left cho tất cả nút trừ nút đầu tiên */
+    }
+
+    /* Thiết lập các nút điều hướng trong bảng thống kê */
+    #monthYearContainer {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    #monthYearInput, #sltpSelect {
+        padding: 5px;
+        width: 180px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+
+    #sortFilter {
+        padding: 5px 15px;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+    }
+
+    #sortFilter:hover {
+        background-color: #0056b3;
+    }
+    #duan {
+        padding: 5px;
+        background-color: #ff9800;
+    }
+</style>
+
+</head>
+<body>
+    <h1>Thống Kê Giao Dịch</h1>
+    <h3>Chọn dự án</h3>
+    <select id="duan">
+        <option value="">Chọn dự án</option>
+    </select>
+
+    <h3>Thêm Giao Dịch</h3>
+    <table id="addTradeTable">
+        <thead>
+            <tr>
+                <th>Ngày giao dịch</th>
+                <th>Cặp tiền</th>
+                <th>Tỷ lệ R:R</th>
+                <th>Buy/Sell</th>
+                <th>SL/TP</th>
+                <th>RR thực tế</th>
+                <th>Liên kết ảnh</th>
+                <th>Loại lệnh</th>
+                <th>Khung thời gian</th>
+                <th>Ghi chú</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="addTradeBody">
+            <tr>
+                <td><input type="text" id="date" placeholder="dd-mm-yyyy hh:mm" autocomplete="off" required></td>
+                <td><input type="text" id="pair" placeholder="XAUUSD" required></td>
+                <td><input type="number" id="rr" step="0.1" required></td>
+                <td>
+                    <select id="buysell" required>
+                        <option value="buy">Buy</option>
+                        <option value="sell">Sell</option>
+                    </select>
+                </td>
+                <td>
+                    <select id="sltp" required>
+                        <option value="sl">SL</option>
+                        <option value="tp">TP</option>
+                        <option value="tp">Hoà</option>
+                        <option value="tp">Hụt</option>
+                    </select>
+                </td>
+                <td><input type="number" id="rrtt" step="0.1"></td>
+                <td><input type="url" id="anh" autocomplete="off" placeholder="URL ảnh"></td>
+                <td>
+                    <select id="loailenh">
+                        <option value="">Chọn loại lệnh</option>
+                        <!-- Các loại lệnh sẽ được thêm vào đây -->
+                    </select>
+                </td>
+                <td><input type="text" id="khung" placeholder="Khung thời gian" required></td>
+                <td><textarea id="ghichu" placeholder="Ghi chú về giao dịch"></textarea></td>
+                <td><button id="addTradeBtn">Thêm Giao Dịch</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div id="headerTradesTable">
+        <h3>Dữ Liệu Giao Dịch</h3>
+        <div id="monthYearContainer">
+            <input type="search" id="monthYearInput" placeholder="Tháng/năm (2/2024)">
+            <select id="sltpSelect">
+                <option value="">Không chọn</option>
+                <option value="onlyWinLoss">Thắng - Thua</option>
+                <option value="onlyWinLossDraw">Thắng - Thua - Hoà</option>
+                <option value="sl">SL</option>
+                <option value="tp">TP</option>
+                <option value="hoa">Hoà</option>
+                <option value="hut">Hụt</option>
+            </select>
+            <button id="sortFilter">Lọc</button>
+        </div>
+    </div>
+
+    <table id="tradesTable">
+        <thead>
+            <tr>
+                <th id="header-stt">STT</th>
+                <th id="header-date">Thời gian</th>
+                <th id="header-pair">Cặp tiền</th>
+                <th id="header-rr">R:R</th>
+                <th id="header-buysell">Buy/Sell</th>
+                <th id="header-sltp">SL/TP</th>
+                <th id="header-rrtt">RR Thực tế</th>
+                <th>Hình ảnh</th>
+                <th id="header-loailenh">Loại lệnh</th>
+                <th id="header-khung">Khung</th>
+                <th>Ghi chú</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="tradesBody">
+            <!-- Dữ liệu giao dịch sẽ được thêm vào đây -->
+        </tbody>
+    </table>
+
+    <div id="pagination"></div>
+    <!-- Bảng thống kê -->
+    <div id="statsContainer">
+        <div id="displayStats">
+        </div>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/thongke.js"></script>
+</body>
+</html>

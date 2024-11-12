@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý dự án</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            color: #333;
+            max-width: 900px;
+            margin: 20px auto;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        h3 {
+            color: #34495e;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            margin-right: 5px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 250px;
+        }
+
+        button {
+            padding: 8px 12px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #3498db;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #duanList li, #loailenhList li {
+            background-color: #fff;
+            margin: 5px 0;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        #duanList li:hover, #loailenhList li:hover {
+            background-color: #f1f1f1;
+        }
+
+        #duanList li span, #loailenhList li span {
+            flex: 1;
+            padding: 5px;
+            font-size: 0.95em;
+        }
+
+        #duanList li button, #loailenhList li button {
+            background-color: #e74c3c;
+            padding: 5px 8px;
+            font-size: 0.9em;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            margin-left: 10px;
+        }
+
+        #duanList li button:hover, #loailenhList li button:hover {
+            background-color: #c0392b;
+        }
+
+        #clearDataBtn {
+            margin-top: 20px;
+            background-color: #d35400;
+            width: 100%;
+        }
+
+        #clearDataBtn:hover {
+            background-color: #e67e22;
+        }
+
+        /* Cập nhật style cho nút Tải JSON và Nhập khẩu dữ liệu */
+        #downloadJsonBtn, #importDataBtn {
+            padding: 10px 15px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #2ecc71;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        #downloadJsonBtn:hover, #importDataBtn:hover {
+            background-color: #27ae60;
+        }
+
+        /* Cập nhật style cho input file */
+        #importFile {
+            display: block;
+            font-size: 1em;
+            padding: 8px;
+            width: 100%;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .cloudinary-settings {
+            margin-top: 20px;
+            padding: 8px;
+            background-color: #eaf3f8;
+            border: 1px solid #b3c8d9;
+            border-radius: 5px;
+        }
+        .form {
+            display: flex;
+            gap: 15px;
+        }
+        .form-1 {
+            flex: 1;
+            background-color: blanchedalmond;
+            border-radius: 4px;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Quản lý dự án</h2>
+
+    <h3>Dự án</h3>
+    <div class="form">
+        <input id="duanName" class="form-1" placeholder="Tên dự án" />
+        <button id="addDuanBtn">Thêm</button>
+    </div>
+    <ul id="duanList"></ul>
+
+    <h3>Loại lệnh</h3>
+    <div class="form">
+        <input id="loailenhName" class="form-1" placeholder="Tên loại lệnh" />
+        <button id="addLoailenhBtn">Thêm</button>
+    </div>
+    <ul id="loailenhList"></ul>
+
+    <div class="cloudinary-settings">
+        <h3>Quản lý dữ liệu</h3>
+        <input type="file" id="importFile" accept=".json">
+        <button id="importDataBtn">Nhập dữ liệu</button>
+        <button id="downloadJsonBtn">Xuất dữ liệu</button>
+        <button id="clearDataBtn">Xóa toàn bộ dữ liệu</button>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/duan.js"></script>
+</body>
+</html>

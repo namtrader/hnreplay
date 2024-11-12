@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Thể Loại</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #categoryList li { margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h2>Quản lý Thể Loại</h2>
+
+    <div>
+        <h3>Thể loại</h3>
+        <input id="categoryName" placeholder="Tên thể loại" />
+        <button id="addCategoryBtn">Thêm Thể loại</button>
+        <ul id="categoryList"></ul>
+    </div>
+
+    <div>
+        <h3>Dự án</h3>
+        <input id="projectName" placeholder="Tên dự án" />
+        <button id="addProjectBtn">Thêm Dự án</button>
+        <ul id="projectList"></ul>
+    </div>
+
+
+    <script src="js/db.js"></script>
+    <script src="js/theloai.js"></script>
+</body>
+</html>
