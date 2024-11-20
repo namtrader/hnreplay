@@ -49,10 +49,9 @@ function updateData(key, newData, callback) {
     });
 }
 
-// Hàm để cập nhật dữ liệu khi người dùng chỉnh sửa
-function updateTrade(key, field, value) {
-    const tradeData = { [field]: value }; // Tạo đối tượng với trường đã sửa
-    updateData(key, tradeData); // Không callback hàm loadTradeStats
+function updateTrade(key, fields) {
+    // fields là một đối tượng chứa các trường cần cập nhật
+    updateData(key, fields); // Cập nhật dữ liệu
 }
 
 function loadSettings() {
@@ -115,6 +114,57 @@ function getDuanArray() {
         });
     });
 }
+    // Tạo toast container nếu chưa có
+    function createToastContainer() {
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            toastContainer.style.position = 'fixed'; // Đảm bảo container luôn ở trên
+            toastContainer.style.bottom = '120px'; // Đặt bottom để toast gần đáy
+            toastContainer.style.left = '50%'; // Căn giữa
+            toastContainer.style.transform = 'translateX(-50%)'; // Căn giữa theo chiều ngang
+            toastContainer.style.zIndex = '9999'; // Đặt z-index cao để toast nổi bật
+            toastContainer.style.display = 'flex';
+            toastContainer.style.flexDirection = 'column';
+            toastContainer.style.gap = '10px';
+            document.body.appendChild(toastContainer);
+        }
+        return toastContainer;
+    }
+
+    // Hiển thị toast notification
+    function showToast(message, type = 'success') {
+        const toastContainer = createToastContainer(); // Đảm bảo toast container đã tồn tại
+
+        const toast = document.createElement('div');
+        toast.classList.add('toast', `${type}-toast`);
+        toast.innerText = message;
+        
+        // Style cho từng toast
+        toast.style.backgroundColor = type === 'success' ? '#4CAF50' : '#f44336';
+        toast.style.color = 'white';
+        toast.style.padding = '10px 20px';
+        toast.style.borderRadius = '5px';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-20px)';
+        toast.style.transition = 'opacity 0.5s, transform 0.5s';
+
+        toastContainer.appendChild(toast);
+
+        // Làm cho toast mờ dần sau 4 giây và xóa nó
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(20px)';
+            setTimeout(() => toast.remove(), 500);
+        }, 4000);
+        
+        // Hiển thị toast bằng cách tăng opacity và hiệu ứng di chuyển
+        setTimeout(() => {
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateY(0)';
+        }, 10);
+    }
 
 // Hàm để tạo style
 function createStyles() {
@@ -208,12 +258,10 @@ function createContainerHTML() {
             <div id="loailenhMain">${loailenhHTML}</div>
             <label for="ghichuMain">Ghi chú:</label>
             <textarea style="width: 100%;" id="ghichuMain"></textarea>
-            <label>Link ảnh:</label>
-            <input type="url" id="anhMain" autocomplete="off" style="width: 100%;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; width: 100%;">
                 <div style="flex: 1; margin-right: 5px;">
-                    <label style="font-size: 12px;" for="datetimeMain">Ngày, Tháng, Năm, Giờ:</label>
-                    <input type="text" id="dateMain" placeholder="dd-mm-yyyy hh:mm" autocomplete="off" maxlength="16" style="width: 160px; box-sizing: border-box;">
+                    <label style="font-size: 12px;" for="datetimeMain">Link ảnh:</label>
+                    <input type="url" id="anhMain" autocomplete="off" style="width: 160px; box-sizing: border-box;">
                 </div>
                 
                 <div style="flex: 1;">
@@ -244,9 +292,6 @@ async function addBacktestBtn() {
     if (targetDiv && !document.getElementById('hnBacktestTable') && entryPriceInput) {
         targetDiv.insertAdjacentHTML('afterbegin', createContainerHTML());
 
-        // ngày giờ
-        document.getElementById('dateMain').addEventListener('input', formatDateTimeInput);
-
         const handleTradeClick = async (sltpMain) => {
             if (entryPriceInput && stopLevelInput && unitElement) {
                 const entryPrice = parseFloat(entryPriceInput.value);
@@ -270,7 +315,6 @@ async function addBacktestBtn() {
                     return;
                 }
 
-                const dateMain = document.getElementById('dateMain').value || convertTimestampToDate(Date.now());
                 const rrMain = rr.toFixed(1);
                 const buysellMain = orderType;
                 const loailenhInput = document.querySelector('input[name="loailenh"]:checked');
@@ -303,7 +347,7 @@ async function addBacktestBtn() {
                 });
                 const tradeData = {
                     id: idMain, // Tạo ID duy nhất
-                    date: dateMain, // Ngày giao dịch
+                    date: convertTimestampToDate(Date.now()), // Ngày giao dịch
                     pair: pair, // Cặp tiền
                     rr: rrMain, // Tỷ lệ R:R
                     buysell: buysellMain, // Mua/Bán
@@ -316,6 +360,8 @@ async function addBacktestBtn() {
                     duan: duanMain // Dự án
                 };
                 saveData(`trade_${tradeData.id}`, tradeData);
+                showToast('Thêm thành công!', 'success');
+
                 if (!anhMain) {
                     const settings = await loadSettings();
                     console.log('Cài đặt:', settings);
@@ -331,18 +377,23 @@ async function addBacktestBtn() {
                             if (event.data.type && event.data.type === "SNAPSHOT") {
                                 console.log("Received data from injected script:", event.data.message);
                                 if (event.data.message) {
+                                    const { blobImg, lastBarCloseTime } = event.data.message;
                                     const data = {
                                         CLOUD_NAME: settings.CLOUD_NAME,
                                         CLOUDINARY_UPLOAD_PRESET: settings.CLOUDINARY_UPLOAD_PRESET,
                                         fileName: `${pair}_${idMain}`
                                     };
-                                    takeClientScreenshot(event.data.message, data)
+                                    takeClientScreenshot(blobImg, data)
                                         .then(screenshotUrl => {
                                             console.log("Uploaded screenshot URL:", screenshotUrl);
-                                            updateTrade(`trade_${idMain}`, 'anh', screenshotUrl);
+                                            updateTrade(`trade_${idMain}`, {
+                                                anh: screenshotUrl,
+                                                date: convertTimestampToDate(lastBarCloseTime)
+                                            });
                                         })
                                         .catch(error => {
                                             console.error("Có lỗi xảy ra khi tải ảnh lên:", error);
+                                            showToast('Có lỗi xảy ra khi tải ảnh lên!', 'error');
                                         });
                                 }
                             }
@@ -398,46 +449,10 @@ async function takeClientScreenshot(blob, data) {
     }
 }
 
-function formatDateTimeInput(event) {
-    // Lấy giá trị hiện tại và loại bỏ các ký tự không phải số
-    let value = event.target.value.replace(/[^0-9-: ]/g, '');
-
-    // Tự động thêm dấu '-' sau khi nhập đủ 2 ký tự cho ngày
-    if (value.length >= 2 && value[2] !== '-') {
-        value = value.slice(0, 2) + '-' + value.slice(2);
-    }
-    // Tự động thêm dấu '-' sau khi nhập đủ 2 ký tự cho tháng
-    if (value.length >= 5 && value[5] !== '-') {
-        value = value.slice(0, 5) + '-' + value.slice(5);
-    }
-    // Tự động thêm dấu cách ' ' sau khi nhập đủ 4 ký tự cho năm
-    if (value.length >= 10 && value[10] !== ' ') {
-        value = value.slice(0, 10) + ' ' + value.slice(10);
-    }
-    // Tự động thêm dấu ':' sau khi nhập đủ 2 ký tự cho giờ
-    if (value.length >= 13 && value[13] !== ':') {
-        value = value.slice(0, 13) + ':' + value.slice(13);
-    }
-
-    // Cập nhật giá trị input
-    event.target.value = value;
-
-    // Xử lý trường hợp xóa ký tự
-    if (event.inputType === 'deleteContentBackward') {
-        const cursorPosition = event.target.selectionStart;
-
-        // Nếu ký tự cuối cùng là dấu phân cách, xóa nó khi người dùng xóa
-        if (value[cursorPosition - 1] === '-' || value[cursorPosition - 1] === ' ' || value[cursorPosition - 1] === ':') {
-            event.target.value = value.slice(0, cursorPosition - 1) + value.slice(cursorPosition);
-            event.target.setSelectionRange(cursorPosition - 1, cursorPosition - 1); // Đặt lại vị trí con trỏ
-        }
-    }
-}
-
 // Hàm chuyển đổi timestamp thành định dạng ngày
 function convertTimestampToDate(timestamp) {
-    // Chuyển đổi giá trị thành đối tượng Date
-    const date = new Date(timestamp);
+    // Kiểm tra xem giá trị timestamp có phải là mili giây hay không (giá trị lớn hơn hoặc bằng 1000000000000)
+    const date = new Date(timestamp >= 1000000000000 ? timestamp : timestamp * 1000); 
 
     // Lấy ngày, tháng, năm, giờ và phút
     const day = String(date.getDate()).padStart(2, '0');
@@ -460,6 +475,7 @@ async function init() {
         if (duanLastId && duanLastId > 0) {
             await getLoailenhArray(); // Lấy loại lệnh
             await getDuanArray(); // Lấy dự án
+            createToastContainer();
             createStyles(); // Tạo kiểu dáng
             addBacktestBtn(); // Thêm nút backtest
 

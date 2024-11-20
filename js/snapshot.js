@@ -3,11 +3,13 @@
 
     // Kiểm tra và sử dụng window.TradingViewApi
     if (window.TradingViewApi) {
-        try {
+        try {;
             const screenshotCanvas = await window.TradingViewApi.takeClientScreenshot();
-            const blob = await new Promise((resolve) => screenshotCanvas.toBlob(resolve, 'image/png'));
-            const message = blob;
+            const blobImg = await new Promise((resolve) => screenshotCanvas.toBlob(resolve, 'image/png'));
 
+            const lastBarCloseTime = window.TradingViewApi.activeChart().getSeries()._series._lastBarCloseTime
+
+            const message = {blobImg,  lastBarCloseTime};
             // Gửi dữ liệu qua postMessage
             window.postMessage({ type: "SNAPSHOT", message }, "*");
         } catch (error) {
